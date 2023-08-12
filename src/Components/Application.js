@@ -187,7 +187,7 @@ function Application(props) {
     <div>
       <Toolbar className={classes.sideToolBar}>
         <Typography variant="h6" className={classes.sideToolBarText}>
-          CHATIFY
+          WISCORD
         </Typography>
       </Toolbar>
       <Divider />
@@ -299,7 +299,7 @@ function Application(props) {
               </MenuItem>
 
               <MenuItem onClick={signOut}>
-                <GoSignOut /> &nbsp; Sign Out of Chatify
+                <GoSignOut /> &nbsp; Sign Out of Wiscord
               </MenuItem>
             </Menu>
           </div>

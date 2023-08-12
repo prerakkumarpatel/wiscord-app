@@ -32,12 +32,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Rooms() {
+function AllUsers() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [useropen, setuserOpen] = React.useState(true);
   const [channelList, setChannelList] = useState([]);
-  const [userList, setUserList] = useState([]);
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const history = useHistory();
   const [alert, setAlert] = useState(false);
@@ -54,25 +52,12 @@ function Rooms() {
           }))
         );
       });
-    db.collection("users")
-      .where("isTyping", "==", "true")
-      .onSnapshot((snapshot) => {
-        console.log(snapshot);
-        setUserList(
-          snapshot.docs.map((user) => ({
-            userName: user.data().displayName,
-            id: user.id,
-          }))
-        );
-      });
   }, []);
 
   const handleClick = () => {
     setOpen(!open);
   };
-  const handleuserClick = () => {
-    setuserOpen(!useropen);
-  };
+
   const goToChannel = (id) => {
     history.push(`/channel/${id}`);
   };
@@ -141,15 +126,16 @@ function Rooms() {
       <List component="nav" aria-labelledby="nested-list-subheader">
         <ListItem button onClick={handleClick}>
           <ListItemIcon>
-            <IoMdChatboxes className={classes.iconDesign} />
+            <IoMdContacts className={classes.iconDesign} />
           </ListItemIcon>
-          <ListItemText primary="CHANNELS" style={{ color: "#8e9297" }} />
+          <ListItemText primary="AllUsers" style={{ color: "#8e9297" }} />
           {open ? (
             <ExpandLess className={classes.primary} />
           ) : (
             <ExpandMore className={classes.primary} />
           )}
-        </ListItem>{" "}
+        </ListItem>
+
         <Collapse in={open} timeout="auto">
           <List component="div" disablePadding>
             {channelList.map((channel) => (
@@ -177,45 +163,9 @@ function Rooms() {
             ))}
           </List>
         </Collapse>
-        <ListItem button onClick={handleuserClick}>
-          <ListItemIcon>
-            <IoMdContacts className={classes.iconDesign} />
-          </ListItemIcon>
-          <ListItemText primary="AllUsers" style={{ color: "#8e9297" }} />
-          {open ? (
-            <ExpandLess className={classes.primary} />
-          ) : (
-            <ExpandMore className={classes.primary} />
-          )}
-        </ListItem>
-        <Collapse in={open} timeout="auto">
-          <List component="div" disablePadding>
-            {userList.map((user) => (
-              <ListItem
-                key={user.id}
-                button
-                className={classes.nested}
-                // onClick={() => goToChannel(user.id)}
-              >
-                {" "}
-                {console.log(userList)}
-                {/* <ListItemIcon style={{ minWidth: "30px" }}>
-                  <BiHash
-                    className={classes.iconDesign}
-                    style={{ color: "#b9bbbe" }}
-                  />
-                </ListItemIcon> */}
-                <ListItemText
-                  primary={user.userName}
-                  style={{ color: "#dcddde" }}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Collapse>
       </List>
     </div>
   );
 }
 
-export default Rooms;
+export default AllUsers;

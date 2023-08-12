@@ -7,6 +7,7 @@ import Home from "./Components/Home";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { auth, db } from "./Firebase/Firebase";
 import "./App.css";
+import AllUsers from "./Components/AllUsers";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,6 +35,7 @@ function App() {
             if (doc.exists) {
               console.log("user exits");
             } else {
+              console.log("hi in ");
               const details = {
                 name: user.displayName,
                 displayName: user.displayName.split(" ")[0],
@@ -80,6 +82,9 @@ function App() {
                 <Route path="/channel/:id">
                   <Chat />
                 </Route>
+                {/* <Route path="/allusers">
+                  <AllUsers />
+                </Route> */}
               </Switch>
             </main>
           </div>

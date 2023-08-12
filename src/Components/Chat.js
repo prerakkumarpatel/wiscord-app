@@ -16,6 +16,7 @@ import { RiImageAddLine } from "react-icons/ri";
 import FileUpload from "./FileUpload";
 import "emoji-mart/css/emoji-mart.css";
 
+// import firebase from "../Firebase/Firebase";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -63,10 +64,12 @@ const useStyles = makeStyles((theme) => ({
     display: "none",
   },
 }));
-
 function Chat() {
   const classes = useStyles();
   const params = useParams();
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingUsers, setTypingUsers] = useState([]);
+
   const [allMessages, setAllMessages] = useState([]);
   const [channelName, setChannelName] = useState("");
   const [userNewMsg, setUserNewMsg] = useState("");
@@ -75,6 +78,20 @@ function Chat() {
   const [file, setFileName] = useState(null);
 
   useEffect(() => {
+    const handleTypingStart = () => {
+      setIsTyping(true);
+    };
+
+    // Event listener for typing end
+    const handleTypingEnd = () => {
+      setIsTyping(false);
+    };
+
+    // Add event listeners to the message input field
+    const messageInput = document.getElementById("outlined-basic"); // Add an ID to your message input field
+    messageInput.addEventListener("input", handleTypingStart);
+    messageInput.addEventListener("blur", handleTypingEnd);
+
     if (params.id) {
       db.collection("channels")
         .doc(params.id)
@@ -92,7 +109,46 @@ function Chat() {
           );
         });
     }
-  }, [params]);
+    const currentUser = JSON.parse(localStorage.getItem("userDetails"));
+    db.collection("users")
+      .doc(currentUser.uid)
+      .update({ ...currentUser, isTyping: isTyping })
+      .then((res) => {
+        console.log("user typing");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // // Create a reference to the user's typing status
+    // const typingRef = firebase.database().ref("typing");
+    // const userTypingRef = typingRef.child(currentUser.uid);
+
+    // // Update the user's typing status in the database
+    // userTypingRef
+    //   .set(isTyping)
+    //   .then(() => {
+    //     console.log("User typing status updated");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error updating user typing status:", error);
+    //   });
+    // typingRef.on("value", (snapshot) => {
+    //   const typingStatus = snapshot.val();
+    //   if (typingStatus) {
+    //     const typingUsers = Object.keys(typingStatus).filter(
+    //       (uid) => uid !== currentUser.uid
+    //     );
+    //     setTypingUsers(typingUsers);
+    //   }
+    // });
+    return () => {
+      // userTypingRef.remove();
+      // typingRef.off("value");
+      messageInput.removeEventListener("input", handleTypingStart);
+      messageInput.removeEventListener("blur", handleTypingEnd);
+    };
+  }, [params, isTyping]);
 
   const sendMsg = (e) => {
     e.preventDefault();
@@ -101,6 +157,7 @@ function Chat() {
 
       if (userData) {
         const displayName = userData.displayName;
+        const typing = userData.isTyping;
         const imgUrl = userData.photoURL;
         const uid = userData.uid;
         const likeCount = 0;
@@ -116,6 +173,7 @@ function Chat() {
           userImg: imgUrl,
           userName: displayName,
           uid: uid,
+          isTyping: typing,
           likeCount: likeCount,
           likes: likes,
           fireCount: fireCount,
@@ -224,6 +282,7 @@ function Chat() {
                 setUserNewMsg(e.target.value);
               }}
             />
+
             <IconButton type="submit" component="button">
               <FiSend style={{ color: "#b9bbbe" }} />
             </IconButton>

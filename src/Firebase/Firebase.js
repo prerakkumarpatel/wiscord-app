@@ -15,16 +15,14 @@ const provider = new firebase.auth.GoogleAuthProvider();
 //   measurementId: "G-EHQ2YBVYY9",
 // };
 const firebaseConfig = {
-  apiKey: "AIzaSyBAvotNj9tJBQvaSdDSX8E_Fwe2eDNNenQ",
-  authDomain: "wiscord-app.firebaseapp.com",
-  databaseURL: "https://wiscord-app-default-rtdb.firebaseio.com",
-  projectId: "wiscord-app",
-  storageBucket: "wiscord-app.appspot.com",
-  messagingSenderId: "1082891287488",
-  appId: "1:1082891287488:web:55c887c48f4ccafe946625",
-  measurementId: "G-ZH7S42YCSE",
+  apiKey: "AIzaSyAnzami0Vn9c9LJaWJVn-0VWeC7K80HMKg",
+  authDomain: "mywiscord.firebaseapp.com",
+  projectId: "mywiscord",
+  storageBucket: "mywiscord.appspot.com",
+  messagingSenderId: "686624665021",
+  appId: "1:686624665021:web:d2e226587dd546882ab6d4",
+  measurementId: "G-ZH38CRN13G",
 };
-
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 const db = firebaseApp.firestore();
