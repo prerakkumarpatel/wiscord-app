@@ -359,6 +359,7 @@ function Messages({ values, msgId }) {
             src={values.userImg}
             className={classes.purple}
           />
+          {values.i}
         </div>
 
         <div className={classes.chat}>
