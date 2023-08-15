@@ -12,7 +12,7 @@ import Divider from "@material-ui/core/Divider";
 import AddIcon from "@material-ui/icons/Add";
 import { db } from "../Firebase/Firebase";
 import { useHistory } from "react-router-dom";
-import { IoMdChatboxes, IoMdContacts } from "react-icons/io";
+import { IoMdChatboxes } from "react-icons/io";
 import { BiHash } from "react-icons/bi";
 import CreateRoom from "./CreateRoom";
 import Fade from "@material-ui/core/Fade";
@@ -35,9 +35,7 @@ const useStyles = makeStyles((theme) => ({
 function Rooms() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [useropen, setuserOpen] = React.useState(true);
   const [channelList, setChannelList] = useState([]);
-  const [userList, setUserList] = useState([]);
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const history = useHistory();
   const [alert, setAlert] = useState(false);
@@ -54,24 +52,10 @@ function Rooms() {
           }))
         );
       });
-    db.collection("users")
-      .where("isTyping", "==", "true")
-      .onSnapshot((snapshot) => {
-        console.log(snapshot);
-        setUserList(
-          snapshot.docs.map((user) => ({
-            userName: user.data().displayName,
-            id: user.id,
-          }))
-        );
-      });
   }, []);
 
   const handleClick = () => {
     setOpen(!open);
-  };
-  const handleuserClick = () => {
-    setuserOpen(!useropen);
   };
   const goToChannel = (id) => {
     history.push(`/channel/${id}`);
@@ -171,42 +155,6 @@ function Rooms() {
                       ? channel.channelName
                       : `${channel.channelName.substr(0, 12)}...`
                   }
-                  style={{ color: "#dcddde" }}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </Collapse>
-        <ListItem button onClick={handleuserClick}>
-          <ListItemIcon>
-            <IoMdContacts className={classes.iconDesign} />
-          </ListItemIcon>
-          <ListItemText primary="AllUsers" style={{ color: "#8e9297" }} />
-          {open ? (
-            <ExpandLess className={classes.primary} />
-          ) : (
-            <ExpandMore className={classes.primary} />
-          )}
-        </ListItem>
-        <Collapse in={open} timeout="auto">
-          <List component="div" disablePadding>
-            {userList.map((user) => (
-              <ListItem
-                key={user.id}
-                button
-                className={classes.nested}
-                // onClick={() => goToChannel(user.id)}
-              >
-                {" "}
-                {console.log(userList)}
-                {/* <ListItemIcon style={{ minWidth: "30px" }}>
-                  <BiHash
-                    className={classes.iconDesign}
-                    style={{ color: "#b9bbbe" }}
-                  />
-                </ListItemIcon> */}
-                <ListItemText
-                  primary={user.userName}
                   style={{ color: "#dcddde" }}
                 />
               </ListItem>

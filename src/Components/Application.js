@@ -17,6 +17,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { Grid } from "@material-ui/core";
 import { deepPurple } from "@material-ui/core/colors";
 import Rooms from "./Rooms";
+import AllUsers from "./AllUsers";
 import { GoSignOut } from "react-icons/go";
 import { FaUserEdit } from "react-icons/fa";
 import { auth, db } from "../Firebase/Firebase";
@@ -222,6 +223,9 @@ function Application(props) {
       </Grid>
       <Divider />
       <Rooms />
+      <Divider />
+
+      <AllUsers />
       <Divider />
     </div>
   );

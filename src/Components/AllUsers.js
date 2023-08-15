@@ -12,8 +12,8 @@ import Divider from "@material-ui/core/Divider";
 import AddIcon from "@material-ui/icons/Add";
 import { db } from "../Firebase/Firebase";
 import { useHistory } from "react-router-dom";
-import { IoMdChatboxes, IoMdContacts } from "react-icons/io";
-import { BiHash } from "react-icons/bi";
+import { IoMdContacts } from "react-icons/io";
+import { FiCircle } from "react-icons/fi";
 import CreateRoom from "./CreateRoom";
 import Fade from "@material-ui/core/Fade";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -34,21 +34,23 @@ const useStyles = makeStyles((theme) => ({
 
 function AllUsers() {
   const classes = useStyles();
+  const [userList, setUserList] = useState([]);
+  const [useropen, setuserOpen] = React.useState(true);
   const [open, setOpen] = React.useState(true);
-  const [channelList, setChannelList] = useState([]);
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const history = useHistory();
   const [alert, setAlert] = useState(false);
 
   useEffect(() => {
-    db.collection("channels")
-      .orderBy("channelName", "asc")
+    db.collection("users")
+      // .where("isTyping", "==", "true")
       .onSnapshot((snapshot) => {
         console.log(snapshot);
-        setChannelList(
-          snapshot.docs.map((channel) => ({
-            channelName: channel.data().channelName,
-            id: channel.id,
+        setUserList(
+          snapshot.docs.map((user) => ({
+            userName: user.data().displayName,
+            id: user.id,
+            isTyping: user.data().isTyping,
           }))
         );
       });
@@ -58,6 +60,9 @@ function AllUsers() {
     setOpen(!open);
   };
 
+  const handleuserClick = () => {
+    setuserOpen(!useropen);
+  };
   const goToChannel = (id) => {
     history.push(`/channel/${id}`);
   };
@@ -77,25 +82,8 @@ function AllUsers() {
         handleAlert();
         return;
       }
-
-      for (var i = 0; i < channelList.length; i++) {
-        if (cName === channelList[i].channelName) {
-          handleAlert();
-          return;
-        }
-      }
-
-      db.collection("channels")
-        .add({ channelName: cName.toLowerCase() })
-        .then((res) => {
-          console.log("added new channel");
-        })
-        .then((err) => {
-          console.log(err);
-        });
     }
   };
-
   return (
     <div>
       <Snackbar
@@ -116,7 +104,7 @@ function AllUsers() {
         <CreateRoom create={addChannel} manage={manageCreateRoomModal} />
       ) : null}
       <ListItem style={{ paddingTop: 0, paddingBottom: 0 }}>
-        <ListItemText primary="Create New Channel" />
+        <ListItemText primary="Add  user" />
         <IconButton edge="end" aria-label="add" onClick={manageCreateRoomModal}>
           <AddIcon className={classes.primary} />
         </IconButton>
@@ -124,7 +112,7 @@ function AllUsers() {
       <Divider />
 
       <List component="nav" aria-labelledby="nested-list-subheader">
-        <ListItem button onClick={handleClick}>
+        <ListItem button onClick={handleuserClick}>
           <ListItemIcon>
             <IoMdContacts className={classes.iconDesign} />
           </ListItemIcon>
@@ -135,30 +123,28 @@ function AllUsers() {
             <ExpandMore className={classes.primary} />
           )}
         </ListItem>
-
         <Collapse in={open} timeout="auto">
           <List component="div" disablePadding>
-            {channelList.map((channel) => (
+            {userList.map((user) => (
               <ListItem
-                key={channel.id}
+                key={user.id}
                 button
                 className={classes.nested}
-                onClick={() => goToChannel(channel.id)}
+                // onClick={() => goToChannel(user.id)}
               >
-                <ListItemIcon style={{ minWidth: "30px" }}>
-                  <BiHash
-                    className={classes.iconDesign}
-                    style={{ color: "#b9bbbe" }}
-                  />
-                </ListItemIcon>
                 <ListItemText
-                  primary={
-                    channel.channelName === channel.channelName.substr(0, 12)
-                      ? channel.channelName
-                      : `${channel.channelName.substr(0, 12)}...`
-                  }
+                  primary={user.userName}
                   style={{ color: "#dcddde" }}
-                />
+                />{" "}
+                {/* {`${user.isTyping}`} */}
+                {user.isTyping && (
+                  <ListItemIcon style={{ minWidth: "30px" }}>
+                    <FiCircle
+                      className={classes.iconDesign}
+                      style={{ color: "green" }}
+                    />
+                  </ListItemIcon>
+                )}
               </ListItem>
             ))}
           </List>
@@ -167,5 +153,4 @@ function AllUsers() {
     </div>
   );
 }
-
 export default AllUsers;
