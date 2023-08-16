@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Application from "./Components/Application";
 import Chat from "./Components/Chat";
+import UserMessages from "./Components/UserMessages";
 import Login from "./Components/SignUp";
 import Home from "./Components/Home";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -82,9 +83,12 @@ function App() {
                 <Route path="/channel/:id">
                   <Chat />
                 </Route>
-                {/* <Route path="/allusers">
+                <Route path="/usermessage/:id">
+                  <UserMessages />
+                </Route>
+                <Route path="/allusers">
                   <AllUsers />
-                </Route> */}
+                </Route>
               </Switch>
             </main>
           </div>

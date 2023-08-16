@@ -41,6 +41,7 @@ function AllUsers() {
   const history = useHistory();
   const [alert, setAlert] = useState(false);
 
+  const currentUser = JSON.parse(localStorage.getItem("userDetails"));
   useEffect(() => {
     db.collection("users")
       // .where("isTyping", "==", "true")
@@ -49,7 +50,8 @@ function AllUsers() {
         setUserList(
           snapshot.docs.map((user) => ({
             userName: user.data().displayName,
-            id: user.id,
+            id: user.data().id,
+            email: user.data().email,
             isTyping: user.data().isTyping,
           }))
         );
@@ -63,8 +65,8 @@ function AllUsers() {
   const handleuserClick = () => {
     setuserOpen(!useropen);
   };
-  const goToChannel = (id) => {
-    history.push(`/channel/${id}`);
+  const goToChannel = (id, name) => {
+    history.push(`/usermessage/${id}`);
   };
 
   const manageCreateRoomModal = () => {
@@ -125,28 +127,30 @@ function AllUsers() {
         </ListItem>
         <Collapse in={open} timeout="auto">
           <List component="div" disablePadding>
-            {userList.map((user) => (
-              <ListItem
-                key={user.id}
-                button
-                className={classes.nested}
-                // onClick={() => goToChannel(user.id)}
-              >
-                <ListItemText
-                  primary={user.userName}
-                  style={{ color: "#dcddde" }}
-                />{" "}
-                {/* {`${user.isTyping}`} */}
-                {user.isTyping && (
-                  <ListItemIcon style={{ minWidth: "30px" }}>
-                    <FiCircle
-                      className={classes.iconDesign}
-                      style={{ color: "green" }}
-                    />
-                  </ListItemIcon>
-                )}
-              </ListItem>
-            ))}
+            {userList
+              .filter((user) => user.email !== currentUser.email) // Fixed the condition to compare user ids
+              .map((user) => (
+                <ListItem
+                  key={user.id}
+                  button
+                  className={classes.nested}
+                  onClick={() => goToChannel(user.id, user.userName)}
+                >
+                  {(console.log(user.email), console.log(currentUser.email))}
+                  <ListItemText
+                    primary={user.userName}
+                    style={{ color: "#dcddde" }}
+                  />
+                  {user.isTyping && (
+                    <ListItemIcon style={{ minWidth: "30px" }}>
+                      <FiCircle
+                        className={classes.iconDesign}
+                        style={{ color: "green" }}
+                      />
+                    </ListItemIcon>
+                  )}
+                </ListItem>
+              ))}
           </List>
         </Collapse>
       </List>
