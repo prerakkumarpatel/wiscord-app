@@ -33,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
 
 function SignUp() {
   const classes = useStyles();
-
   const login = () => {
     auth
       .signInWithPopup(provider)
@@ -65,5 +64,4 @@ function SignUp() {
     </Container>
   );
 }
-
 export default SignUp;
