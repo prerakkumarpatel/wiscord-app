@@ -16,7 +16,7 @@ const provider = new firebase.auth.GoogleAuthProvider();
 // };
 const firebaseConfig = {
   apiKey: "AIzaSyAnzami0Vn9c9LJaWJVn-0VWeC7K80HMKg",
-  authDomain: "mywiscord.firebaseapp.com",
+  authDomain: "https://wiscord-app.vercel.app/",
   projectId: "mywiscord",
   storageBucket: "mywiscord.appspot.com",
   messagingSenderId: "686624665021",
