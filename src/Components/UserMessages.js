@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { db } from "../Firebase/Firebase";
 import firebase from "firebase/app";
 import ScrollableFeed from "react-scrollable-feed";
-import { BiHash } from "react-icons/bi";
+
 import { FiSend } from "react-icons/fi";
 import { GrEmoji } from "react-icons/gr";
 import { Picker } from "emoji-mart";
