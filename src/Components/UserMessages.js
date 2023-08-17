@@ -14,6 +14,7 @@ import { GrEmoji } from "react-icons/gr";
 import { Picker } from "emoji-mart";
 import { RiImageAddLine } from "react-icons/ri";
 import FileUpload from "./FileUpload";
+import { useLocation } from "react-router-dom";
 import "emoji-mart/css/emoji-mart.css";
 
 // import firebase from "../Firebase/Firebase";
@@ -66,7 +67,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 function UserMessages() {
   const classes = useStyles();
-  const { id, name } = useParams();
+  const { params } = useParams();
+  const location = useLocation();
+
+  // Extract the query parameter(s) from the location.search string
+  const queryParams = new URLSearchParams(location.search);
+
+  // Access specific query parameter values
+  const receivername = queryParams.get("name"); // Replace 'paramName' with your parameter name
 
   const [isTyping, setIsTyping] = useState(false);
   //   const [typingUsers, setTypingUsers] = useState([]);
@@ -94,7 +102,7 @@ function UserMessages() {
     messageInput.addEventListener("input", handleTypingStart);
     messageInput.addEventListener("blur", handleTypingEnd);
 
-    if (id) {
+    if (params) {
       db.collection("users")
         .doc(currentUser.uid)
         .collection("messages")
@@ -106,7 +114,7 @@ function UserMessages() {
         });
 
       db.collection("users")
-        .doc(id)
+        .doc(params.id)
         .collection("messages")
         .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
@@ -153,11 +161,11 @@ function UserMessages() {
       messageInput.removeEventListener("input", handleTypingStart);
       messageInput.removeEventListener("blur", handleTypingEnd);
     };
-  }, [id, name, isTyping]);
+  }, [params, isTyping]);
 
   const sendMsg = (e) => {
     e.preventDefault();
-    if (userNewMsg && id) {
+    if (userNewMsg && params.id) {
       const userData = JSON.parse(localStorage.getItem("userDetails"));
 
       if (userData) {
@@ -166,7 +174,7 @@ function UserMessages() {
         const imgUrl = userData.photoURL;
         const uid = userData.uid;
         const sender = uid;
-        const receiver = id;
+        const receiver = params.id;
         const likeCount = 0;
         const likes = {};
         const fireCount = 0;
@@ -193,7 +201,7 @@ function UserMessages() {
         };
 
         db.collection("users")
-          .doc(id)
+          .doc(params.id)
           .collection("messages")
           .add(obj)
           .then((res) => {
@@ -240,8 +248,7 @@ function UserMessages() {
     <div className={classes.root}>
       {modalState ? <FileUpload setState={openModal} file={file} /> : null}
       <Grid item xs={12} className={classes.roomName}>
-        <BiHash className={classes.iconDesign} />
-        <h3 className={classes.roomNameText}>{}</h3>
+        <h3 className={classes.roomNameText}>{receivername}</h3>
       </Grid>
       <Grid item xs={12} className={classes.chat}>
         <ScrollableFeed>

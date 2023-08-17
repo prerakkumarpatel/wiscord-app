@@ -36,7 +36,7 @@ function AllUsers() {
   const classes = useStyles();
   const [userList, setUserList] = useState([]);
   const [useropen, setuserOpen] = React.useState(true);
-  const [open, setOpen] = React.useState(true);
+  // const [open, setOpen] = React.useState(true);
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const history = useHistory();
   const [alert, setAlert] = useState(false);
@@ -50,7 +50,7 @@ function AllUsers() {
         setUserList(
           snapshot.docs.map((user) => ({
             userName: user.data().displayName,
-            id: user.data().id,
+            id: user.id,
             email: user.data().email,
             isTyping: user.data().isTyping,
           }))
@@ -58,15 +58,15 @@ function AllUsers() {
       });
   }, []);
 
-  const handleClick = () => {
-    setOpen(!open);
-  };
+  // const handleClick = () => {
+  //   setOpen(!open);
+  // };
 
   const handleuserClick = () => {
     setuserOpen(!useropen);
   };
   const goToChannel = (id, name) => {
-    history.push(`/usermessage/${id}`);
+    history.push(`/usermessage/${id}?name=${name}`);
   };
 
   const manageCreateRoomModal = () => {
@@ -119,13 +119,13 @@ function AllUsers() {
             <IoMdContacts className={classes.iconDesign} />
           </ListItemIcon>
           <ListItemText primary="AllUsers" style={{ color: "#8e9297" }} />
-          {open ? (
+          {useropen ? (
             <ExpandLess className={classes.primary} />
           ) : (
             <ExpandMore className={classes.primary} />
           )}
         </ListItem>
-        <Collapse in={open} timeout="auto">
+        <Collapse in={useropen} timeout="auto">
           <List component="div" disablePadding>
             {userList
               .filter((user) => user.email !== currentUser.email) // Fixed the condition to compare user ids
@@ -136,7 +136,7 @@ function AllUsers() {
                   className={classes.nested}
                   onClick={() => goToChannel(user.id, user.userName)}
                 >
-                  {(console.log(user.email), console.log(currentUser.email))}
+                  {/* {(console.log(user.email), console.log(currentUser.email))} */}
                   <ListItemText
                     primary={user.userName}
                     style={{ color: "#dcddde" }}

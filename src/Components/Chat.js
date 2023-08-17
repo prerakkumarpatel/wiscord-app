@@ -68,7 +68,7 @@ function Chat() {
   const classes = useStyles();
   const params = useParams();
   const [isTyping, setIsTyping] = useState(false);
-  const [typingUsers, setTypingUsers] = useState([]);
+  // const [typingUsers, setTypingUsers] = useState([]);
 
   const [allMessages, setAllMessages] = useState([]);
   const [channelName, setChannelName] = useState("");
