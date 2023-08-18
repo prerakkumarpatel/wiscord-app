@@ -36,7 +36,6 @@ function App() {
             if (doc.exists) {
               console.log("user exits");
             } else {
-              console.log("hi in ");
               const details = {
                 name: user.displayName,
                 displayName: user.displayName.split(" ")[0],
