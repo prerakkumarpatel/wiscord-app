@@ -40,8 +40,14 @@ function AllUsers() {
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const history = useHistory();
   const [alert, setAlert] = useState(false);
-
-  const currentUser = JSON.parse(localStorage.getItem("userDetails"));
+  let currentUser;
+  try {
+    currentUser = JSON.parse(localStorage.getItem("userDetails"));
+  } catch {
+    if (currentUser === undefined) {
+      currentUser = "";
+    }
+  }
   useEffect(() => {
     db.collection("users")
       // .where("isTyping", "==", "true")
@@ -66,7 +72,10 @@ function AllUsers() {
     setuserOpen(!useropen);
   };
   const goToChannel = (id, name) => {
-    history.push(`/usermessage/${id}?name=${name}`);
+    history.push(`/usermessage/${id}`);
+
+    // console.log(id);
+    history.push(`?name=${name}`);
   };
 
   const manageCreateRoomModal = () => {
@@ -136,7 +145,7 @@ function AllUsers() {
                   className={classes.nested}
                   onClick={() => goToChannel(user.id, user.userName)}
                 >
-                  {/* {(console.log(user.email), console.log(currentUser.email))} */}
+                  {}
                   <ListItemText
                     primary={user.userName}
                     style={{ color: "#dcddde" }}

@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 function UserMessages() {
   const classes = useStyles();
-  const { params } = useParams();
+  const params = useParams();
   const location = useLocation();
 
   // Extract the query parameter(s) from the location.search string
@@ -102,27 +102,20 @@ function UserMessages() {
     messageInput.addEventListener("input", handleTypingStart);
     messageInput.addEventListener("blur", handleTypingEnd);
 
-    if (params) {
+    if (params.id) {
+      console.log(params, "params");
       db.collection("users")
         .doc(currentUser.uid)
         .collection("messages")
-        .get()
-        .then((document) => {
-          //   setAllMessages(snapshot.messages);
-          console.log("snap");
-          console.log(document);
-        });
-
-      db.collection("users")
-        .doc(params.id)
-        .collection("messages")
-        .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
           setAllMessages(
             snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }))
           );
         });
     }
+
+    console.log(allMessages, "allmes");
+
     db.collection("users")
       .doc(currentUser.uid)
       .update({ ...currentUser, isTyping: isTyping })
@@ -165,7 +158,8 @@ function UserMessages() {
 
   const sendMsg = (e) => {
     e.preventDefault();
-    if (userNewMsg && params.id) {
+    console.log(userNewMsg, params.id);
+    if (userNewMsg && params) {
       const userData = JSON.parse(localStorage.getItem("userDetails"));
 
       if (userData) {
@@ -304,7 +298,7 @@ function UserMessages() {
               rows={1}
               rowsMax={2}
               value={userNewMsg}
-              onChange={(e) => {
+              onChangeCapture={(e) => {
                 setUserNewMsg(e.target.value);
               }}
             />
