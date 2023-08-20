@@ -74,8 +74,8 @@ function UserMessages() {
   const queryParams = new URLSearchParams(location.search);
 
   // Access specific query parameter values
-  const receivername = queryParams.get("name"); // Replace 'paramName' with your parameter name
-
+  const receiveremail = queryParams.get("email"); // Replace 'paramName' with your parameter name
+  const receivername = queryParams.get("name");
   const [isTyping, setIsTyping] = useState(false);
   //   const [typingUsers, setTypingUsers] = useState([]);
 
@@ -85,9 +85,9 @@ function UserMessages() {
   const [emojiBtn, setEmojiBtn] = useState(false);
   const [modalState, setModalState] = useState(false);
   const [file, setFileName] = useState(null);
+  const currentUser = JSON.parse(localStorage.getItem("userDetails"));
 
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("userDetails"));
     const handleTypingStart = () => {
       setIsTyping(true);
     };
@@ -103,18 +103,66 @@ function UserMessages() {
     messageInput.addEventListener("blur", handleTypingEnd);
 
     if (params.id) {
-      console.log(params, "params");
+      // Load messages initially
+
       db.collection("users")
         .doc(currentUser.uid)
         .collection("messages")
+        .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
+          // console.log(snapshot.docs.at(1).data);
+          const filteredarray = snapshot.docs.filter((message) => {
+            // console.log(
+            //   message.data().receiver,
+            //   message.data().sender,
+            //   params.id
+            // );
+            return (
+              message.data().receiver === params.id ||
+              message.data().sender === params.id
+            );
+          });
+          // console.log(filteredarray);
           setAllMessages(
-            snapshot.docs.map((doc) => ({ id: doc.id, data: doc.data() }))
+            filteredarray.map((doc) => ({ id: doc.id, data: doc.data() }))
           );
         });
-    }
+      // .then((snapshot) => {
+      //   const newmes = snapshot.docs.filter(
+      //     (message) =>
 
-    console.log(allMessages, "allmes");
+      //       message.receiver === `${params.id}` ||
+      //       message.sender === `${params.id}`
+      //   );
+      //   setAllMessages(
+      //     newmes.map((doc) => ({ id: doc.id, data: doc.data() }))
+      //   );
+      // })
+      // .catch((error) => {
+      //   console.error("Error loading initial messages:", error);
+      // });
+      // Listen for real-time updates
+      // db.collection("users")
+      //   .doc(currentUser.uid)
+      //   .collection("messages")
+      //   .orderBy("timestamp", "asc")
+      //   .onSnapshot((snapshot) => {
+      //     const updatedMessages = snapshot.docChanges().map((change) => {
+      //       return { id: change.doc.id, data: change.doc.data() };
+      //     });
+
+      //     setAllMessages((prevMessages) => {
+      //       const mergedMessages = [...prevMessages, ...updatedMessages];
+      //       mergedMessages.sort((a, b) => a.data.timestamp - b.data.timestamp);
+      //       // mergedMessages.filter(
+      //       //   (message) =>
+      //       //     message.receiver === `${params.id}` ||
+      //       //     message.sender === `${currentUser.id}`
+      //       // );
+      //       return mergedMessages;
+      //     });
+      // });
+    }
 
     db.collection("users")
       .doc(currentUser.uid)
@@ -126,36 +174,14 @@ function UserMessages() {
         console.log(err);
       });
 
-    // // Create a reference to the user's typing status
-    // const typingRef = firebase.database().ref("typing");
-    // const userTypingRef = typingRef.child(currentUser.uid);
-
-    // // Update the user's typing status in the database
-    // userTypingRef
-    //   .set(isTyping)
-    //   .then(() => {
-    //     console.log("User typing status updated");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error updating user typing status:", error);
-    //   });
-    // typingRef.on("value", (snapshot) => {
-    //   const typingStatus = snapshot.val();
-    //   if (typingStatus) {
-    //     const typingUsers = Object.keys(typingStatus).filter(
-    //       (uid) => uid !== currentUser.uid
-    //     );
-    //     setTypingUsers(typingUsers);
-    //   }
-    // });
     return () => {
-      // userTypingRef.remove();
-      // typingRef.off("value");
       messageInput.removeEventListener("input", handleTypingStart);
       messageInput.removeEventListener("blur", handleTypingEnd);
     };
   }, [params, isTyping]);
-
+  // useEffect(() => {
+  //
+  // }, []);
   const sendMsg = (e) => {
     e.preventDefault();
     console.log(userNewMsg, params.id);
@@ -195,7 +221,7 @@ function UserMessages() {
         };
 
         db.collection("users")
-          .doc(params.id)
+          .doc(receiver)
           .collection("messages")
           .add(obj)
           .then((res) => {
@@ -242,7 +268,10 @@ function UserMessages() {
     <div className={classes.root}>
       {modalState ? <FileUpload setState={openModal} file={file} /> : null}
       <Grid item xs={12} className={classes.roomName}>
-        <h3 className={classes.roomNameText}>{receivername}</h3>
+        <h3 className={classes.roomNameText}>
+          {" "}
+          To : {receiveremail} ( {receivername} )
+        </h3>
       </Grid>
       <Grid item xs={12} className={classes.chat}>
         <ScrollableFeed>
@@ -298,7 +327,8 @@ function UserMessages() {
               rows={1}
               rowsMax={2}
               value={userNewMsg}
-              onChangeCapture={(e) => {
+              onChange={(e) => {
+                console.log(userNewMsg);
                 setUserNewMsg(e.target.value);
               }}
             />

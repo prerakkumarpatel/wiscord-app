@@ -71,11 +71,11 @@ function AllUsers() {
   const handleuserClick = () => {
     setuserOpen(!useropen);
   };
-  const goToChannel = (id, name) => {
+  const goToChannel = (id, name, email) => {
     history.push(`/usermessage/${id}`);
 
     // console.log(id);
-    history.push(`?name=${name}`);
+    history.push(`?name=${name}&email=${email}`);
   };
 
   const manageCreateRoomModal = () => {
@@ -111,16 +111,16 @@ function AllUsers() {
         }
       />
 
-      {showCreateRoom ? (
+      {/* {showCreateRoom ? (
         <CreateRoom create={addChannel} manage={manageCreateRoomModal} />
-      ) : null}
-      <ListItem style={{ paddingTop: 0, paddingBottom: 0 }}>
+      ) : null} */}
+      {/* <ListItem style={{ paddingTop: 0, paddingBottom: 0 }}>
         <ListItemText primary="Add  user" />
         <IconButton edge="end" aria-label="add" onClick={manageCreateRoomModal}>
           <AddIcon className={classes.primary} />
         </IconButton>
       </ListItem>
-      <Divider />
+      <Divider /> */}
 
       <List component="nav" aria-labelledby="nested-list-subheader">
         <ListItem button onClick={handleuserClick}>
@@ -143,7 +143,9 @@ function AllUsers() {
                   key={user.id}
                   button
                   className={classes.nested}
-                  onClick={() => goToChannel(user.id, user.userName)}
+                  onClick={() =>
+                    goToChannel(user.id, user.userName, user.email)
+                  }
                 >
                   {}
                   <ListItemText
