@@ -231,6 +231,7 @@ function Chat() {
               key={message.id}
               values={message.data}
               msgId={message.id}
+              msgType={"channels"}
             />
           ))}
         </ScrollableFeed>

@@ -93,12 +93,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Messages({ values, msgId }) {
+function Messages({ values, msgId, msgType }) {
   const [style, setStyle] = useState({ display: "none" });
   const [deleteModal, setDeleteModal] = useState(false);
   const classes = useStyles();
 
   const uid = JSON.parse(localStorage.getItem("userDetails")).uid;
+
+  const channelId = useParams().id;
+  const docMessageId = msgType === "users" ? uid : channelId;
   const messegerUid = values.uid;
   const date = values.timestamp.toDate();
   const day = date.getDate();
@@ -118,8 +121,7 @@ function Messages({ values, msgId }) {
 
   const postImg = values.postImg;
 
-  const channelId = useParams().id;
-
+  // console.log(channelId, uid);
   const selectedLike = userLiked
     ? { color: "#8ff879", backgroundColor: "#545454" }
     : null;
@@ -137,11 +139,14 @@ function Messages({ values, msgId }) {
   };
 
   const heartClick = () => {
+    console.log("heart clicked ");
     const messageDoc = db
-      .collection("channels")
-      .doc(channelId)
+      .collection(msgType)
+      .doc(docMessageId)
       .collection("messages")
       .doc(msgId);
+
+    console.log(messageDoc);
     if (userHeart) {
       return db
         .runTransaction((transaction) => {
@@ -199,8 +204,8 @@ function Messages({ values, msgId }) {
 
   const fireClick = () => {
     const messageDoc = db
-      .collection("channels")
-      .doc(channelId)
+      .collection(msgType)
+      .doc(docMessageId)
       .collection("messages")
       .doc(msgId);
     if (userFire) {
@@ -238,7 +243,6 @@ function Messages({ values, msgId }) {
               console.log("doc not found");
               return;
             }
-
             let newFireCount = doc.data().fireCount + 1;
             let newFire = doc.data().fire ? doc.data().fire : {};
             newFire[uid] = true;
@@ -260,8 +264,8 @@ function Messages({ values, msgId }) {
 
   const likeClick = () => {
     const messageDoc = db
-      .collection("channels")
-      .doc(channelId)
+      .collection(msgType)
+      .doc(docMessageId)
       .collection("messages")
       .doc(msgId);
     if (userLiked) {
@@ -320,8 +324,8 @@ function Messages({ values, msgId }) {
   };
 
   const deleteMsg = (id) => {
-    db.collection("channels")
-      .doc(channelId)
+    db.collection(msgType)
+      .doc(docMessageId)
       .collection("messages")
       .doc(id)
       .delete()

@@ -14,7 +14,7 @@ import { db } from "../Firebase/Firebase";
 import { useHistory } from "react-router-dom";
 import { IoMdContacts } from "react-icons/io";
 import { FiCircle } from "react-icons/fi";
-import CreateRoom from "./CreateRoom";
+import AddUser from "./AddUser";
 import Fade from "@material-ui/core/Fade";
 import Snackbar from "@material-ui/core/Snackbar";
 import CloseIcon from "@material-ui/icons/Close";
@@ -37,7 +37,7 @@ function AllUsers() {
   const [userList, setUserList] = useState([]);
   const [useropen, setuserOpen] = React.useState(true);
   // const [open, setOpen] = React.useState(true);
-  const [showCreateRoom, setShowCreateRoom] = useState(false);
+  const [showAddUser, setshowAddUser] = useState(false);
   const history = useHistory();
   const [alert, setAlert] = useState(false);
   let currentUser;
@@ -71,22 +71,22 @@ function AllUsers() {
   const handleuserClick = () => {
     setuserOpen(!useropen);
   };
-  const goToChannel = (id, name, email) => {
+  const goToUser = (id, name, email) => {
     history.push(`/usermessage/${id}`);
 
     // console.log(id);
     history.push(`?name=${name}&email=${email}`);
   };
 
-  const manageCreateRoomModal = () => {
-    setShowCreateRoom(!showCreateRoom);
+  const manageAddUserModal = () => {
+    setshowAddUser(!showAddUser);
   };
 
   const handleAlert = () => {
     setAlert(!alert);
   };
 
-  const addChannel = (cName) => {
+  const addUser = (cName) => {
     if (cName) {
       cName = cName.toLowerCase().trim();
       if (cName === "") {
@@ -111,23 +111,23 @@ function AllUsers() {
         }
       />
 
-      {/* {showCreateRoom ? (
-        <CreateRoom create={addChannel} manage={manageCreateRoomModal} />
-      ) : null} */}
-      {/* <ListItem style={{ paddingTop: 0, paddingBottom: 0 }}>
-        <ListItemText primary="Add  user" />
-        <IconButton edge="end" aria-label="add" onClick={manageCreateRoomModal}>
+      {showAddUser ? (
+        <AddUser create={addUser} manage={manageAddUserModal} />
+      ) : null}
+      <ListItem style={{ paddingTop: 0, paddingBottom: 0 }}>
+        <ListItemText primary="Add  Friends" />
+        <IconButton edge="end" aria-label="add" onClick={manageAddUserModal}>
           <AddIcon className={classes.primary} />
         </IconButton>
       </ListItem>
-      <Divider /> */}
+      <Divider />
 
       <List component="nav" aria-labelledby="nested-list-subheader">
         <ListItem button onClick={handleuserClick}>
           <ListItemIcon>
             <IoMdContacts className={classes.iconDesign} />
           </ListItemIcon>
-          <ListItemText primary="AllUsers" style={{ color: "#8e9297" }} />
+          <ListItemText primary="Your Friends" style={{ color: "#8e9297" }} />
           {useropen ? (
             <ExpandLess className={classes.primary} />
           ) : (
@@ -143,9 +143,7 @@ function AllUsers() {
                   key={user.id}
                   button
                   className={classes.nested}
-                  onClick={() =>
-                    goToChannel(user.id, user.userName, user.email)
-                  }
+                  onClick={() => goToUser(user.id, user.userName, user.email)}
                 >
                   {}
                   <ListItemText

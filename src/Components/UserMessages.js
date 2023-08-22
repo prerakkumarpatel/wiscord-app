@@ -280,6 +280,7 @@ function UserMessages() {
               key={message.id}
               values={message.data}
               msgId={message.id}
+              msgType={"users"}
             />
           ))}
         </ScrollableFeed>
